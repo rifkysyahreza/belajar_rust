@@ -418,4 +418,96 @@ fn function_b() {
     dilakukan adalah mengganti isi variable, bukan mengubah isi dari &str nya
     &str memiliki banyak method yang bisa digunakan, dan beberapa method
     tersebut mengembalikan &str baru atau ada yang String
+
+    ibaratnya buku yang tidak bisa diubah isinya, tapi bisa diganti bukunya
+
+    method nya tidak ada yang mengubah nilainya langsung, tapi menghasilkan nilai baru
 */
+#[test]
+fn string_test() {
+    let name: &str = " Rifky ";
+    let trimmed_name = name.trim();
+
+    print!("the name is {}", name);
+    println!("the name is {}", trimmed_name);
+
+    let mut username = "Rifky"; // masih ada di stack
+    username = "John"; // username menunjuk "John" di stack, bukan mengubah "Rifky", "Rifky" masih ada di memori
+    println!("the username is {}", username);
+}
+
+// String
+/*
+    String adalah tipe data yang bisa mengembang ukurannya
+    String adalah tipe data yang disimpan di heap
+    String memiliki banyak method yang bisa digunakan
+    String bisa diubah
+    Ketika dibuat dalam bentuk immutable, maka String tidak bisa berkembang
+    tetapi tetap disimpan di heap
+
+    ibaratnya buku yang bisa diubah isinya, dan bisa diganti bukunya
+
+    method nya ada yang membuat string baru, ada yang mengubah string aslinya
+*/
+#[test]
+fn string_type() {
+    let mut name: String = String::from("Rifky");
+    name.push_str("John"); // disini name Rifky sudah dihapus, dan diganti dengan RifkyJohn
+
+    println!("the name is {}", name);
+
+    let tomy = name.replace("Rifky", "tommy"); // method menghasilkan nilai baru
+    println!("the name is {}", name);
+}
+
+// Ownership
+/*
+    Rust menggunakan ownership untuk melakukan data management di memory
+    Ownership adalah salah satu fitur unik di rust yang mungkin jarang ada di bahasa
+    pemrograman lain
+    Ownership wajib dimengerti, karena akan berdampak ke hampir semua fitur di rust
+    Ownership adalah fitur yang digunakan oleh rust untuk menjadikan rust
+    menjadi bahasa pemrograman yang aman dalam mengelola data di memory,
+    tanpa harus adanya fitur garbage collection atau manual memory management
+    Karena Ownership adalah konsep yang baru untuk kebanyakan programmer,
+    maka kadang kita butuh waktu untuk memahaminya
+*/
+
+// Ownership Rules
+/*
+    Rust memiliki 3 aturan ownership
+    1. Setiap nilai di rust memiliki variable yang disebut owner
+    2. Satu nilai hanya memiliki satu owner dalam satu waktu
+    3. Ketika owner keluar dari scope nya, maka nilai tersebut akan dihapus
+*/
+#[test]
+fn ownership_rules() {
+    // a tidak bisa diakses disini, karena belum dideklarasikan
+    let a = 10; // a adalah owner dari 10, a bisa diakses mulai dari sini
+
+    { // b tidak bisa diakses disini, karena belum dideklarasikan
+        let b = 20; // b adalah owner dari 20, b bisa diakses mulai dari sini
+        println!("the b is {}", b);
+    } // b sudah keluar dari scope nya, b dihapus, b tidak bisa diakses lagi
+    
+    println!("the a is {}", a);
+} // a sudah keluar dari scope nya, a dihapus, a tidak bisa diakses lagi
+
+// Data Copy
+/*
+    Sesuai aturan di ownership rules, setiap value harus dimiliki oleh satu owner
+    pada satu waktu
+    Ketika kita berinteraksi dengan data, maka data akan dimiliki hanya oleh satu owner
+    Semua data yang bersifat fixed size (yand disimpan di Stack), ketika kita
+    tambahkan ke variable berbeda (owner baru), maka hasilnya adalah data akan di
+    copy, sehingga variable baru (owner baru), akan memiliki data hasil copy dari
+    variable lama (owner lama)
+    Oleh karena itu, tiap data akan selalu dimiliki oleh satu owner pada satu waktu
+*/
+#[test]
+fn data_copy() {
+    let a = 10; // a adalah owner dari 10
+    let b = a; // b adalah owner dari 10, 10 dari a di copy ke b
+    println!("the a is {}", a);
+    println!("the b is {}", b);
+}
