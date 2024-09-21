@@ -1,3 +1,5 @@
+use std::array;
+
 fn main() {
     println!("Hello, world!");
 }
@@ -507,7 +509,264 @@ fn ownership_rules() {
 #[test]
 fn data_copy() {
     let a = 10; // a adalah owner dari 10
-    let b = a; // b adalah owner dari 10, 10 dari a di copy ke b
+    let b = a; // b adalah owner dari 10 yang baru, 10 dari a di copy ke b
     println!("the a is {}", a);
     println!("the b is {}", b);
+}
+
+// Ownership Movement "Untuk tipe data yang disimpan di heap"
+/*
+    Namun data copy tidak terjadi untuk tipe data yang disimpan di heap
+    Seperti aturan di ownership, dalam satu waktu value hanya dimiliki satu owner
+    Maka ketika kita coba buat variable baru (owner baru) dari variable lama (owner lama),
+    maka yang terjadi bukanlah copy, melainkan movement atau transfer ownership dari
+    owner lama ke owner baru
+    Setelah proses transfer selesai, secara otomatis owner lama akan dianggap tidak
+    valid lagi digunakan
+*/
+#[test]
+fn ownership_movement() {
+    let a = String::from("Rifky"); // a adalah owner dari String Rifky
+    let b = a; // b adalah owner dari String Rifky, kepemilikan Rifky dari a dipindahkan ke b
+    
+    // println!("the a is {}", a); // error, a sudah tidak valid lagi
+    println!("the b is {}", b);
+}
+
+// Clone
+/*
+    Jika kita ingin membuat copy dari data yang disimpan di heap, kita bisa menggunakan
+    method clone
+    Method clone akan membuat copy dari data yang disimpan di heap
+    Method clone akan membuat owner baru dari data yang disimpan di heap
+    Method clone akan membuat data baru dari data yang disimpan di heap
+*/
+#[test]
+fn clone_test() {
+    let a = String::from("Rifky"); // a adalah owner dari String Rifky
+    let b = a.clone(); // b adalah owner dari String Rifky yang baru, kepemilikan Rifky dari a di copy ke b
+
+    println!("the a is {}", a);
+    println!("the b is {}", b);
+}
+
+// If Expression
+#[test]
+fn conditional() {
+    let a = 10;
+
+    if a > 5 {
+        println!("a is greater than 5");
+    } else {
+        println!("a is less than 5");
+    }
+}
+
+// Else if Expression
+#[test]
+fn else_if_expression() {
+    let a = 10;
+
+    if a > 5 {
+        println!("a is greater than 5");
+    } else if a < 5 {
+        println!("a is less than 5");
+    } else {
+        println!("a is equal to 5");
+    }
+}
+
+// Let Statement
+#[test]
+fn let_statement() {
+    let a = 10;
+    // // manual assign
+    // let result: &str;
+
+    // if a > 5 {
+    //     result = "a is greater than 5";
+    // } else if a < 5 {
+    //     result = "a is less than 5";
+    // } else {
+    //     result = "a is equal to 5";
+    // }
+
+    let result: &str = if a > 5 {
+        "a is greater than 5"
+    } else if a < 5 {
+        "a is less than 5"
+    } else {
+        "a is equal to 5"
+    };
+
+    println!("the result is {}", result);
+}
+
+// Loop
+#[test]
+fn loop_expression() {
+    let mut count = 0;
+    
+    loop {
+        count += 1;
+        
+        if count >= 5 {
+            break;
+        }
+        
+        if count == 3 {
+            continue;
+        }
+        
+        println!("the count is {}", count);
+    }
+}
+
+// Loop with return value
+#[test]
+fn loop_with_return_value() {
+    let mut count = 0;
+    
+    let result = loop {
+        count += 1;
+        
+        if count >= 5 {
+            break count * 2;
+        }
+        
+        if count == 3 {
+            continue;
+        }
+        
+        println!("the count is {}", count);
+    };
+
+    println!("this is count {}", count);
+    println!("the result is {}", result);
+}
+
+// Loop Label
+/*
+    Kadang kita sering membuat Loop didalam loop, dan ketika ingin menghentikan
+    loop paling atas dari loop yang ada di dalam, maka hal itu tidak bisa dilakukan
+    Loop memiliki fitur Label, dimana kita bisa memberi nama pada loop
+    Keuntungannya memberi label pada loop adalah kita bisa menghentikan loop
+    yang ingin kita hentikan dengan cara menyebutkan nama labelnya
+*/
+#[test]
+fn loop_label() {
+    let mut count = 0;
+
+    'outer: loop {
+        let mut a = 1;
+
+        loop{
+            if count > 10 {
+                break 'outer;
+            }
+
+            println!("{} x {} = {}", count, a, count * a);
+            a += 1;
+            if a > 10 {
+                break;
+            }
+        }
+        
+        count += 1;
+    }
+}
+
+// While Loop
+/*
+    While loop adalah loop yang akan terus berjalan selama kondisi yang diberikan
+    While loop adalah loop yang akan berhenti jika kondisi yang diberikan sudah tidak terpenuhi
+*/
+#[test]
+fn while_loop() {
+    let mut count = 0;
+
+    while count <= 10 {
+
+        if count%2 == 0 {
+            println!("the count is {} genap", count);
+        }
+        
+        count += 1;
+    }
+}
+
+// For Loop
+/*
+    For loop adalah loop yang akan berjalan berdasarkan range yang diberikan
+    For loop adalah loop yang akan berhenti jika range yang diberikan sudah selesai
+*/
+#[test]
+fn array_loop() {
+    let array = [10, 20, 30, 40, 50];
+
+    for value in array {
+        println!("the value is {}", value);
+    }
+
+    let range = 0..array.len();
+    println!("Start: {}", range.start);
+    println!("End: {}", range.end);
+
+    // range exclusive
+    for value in range {
+        println!("the value is {} from range for loop", array[value]);
+    }
+
+    for value in 0..array.len() {
+        println!("the value is {} from range for loop but simplier", array[value]);
+    }
+
+    // range inclusive
+    let range_two = 0..=array.len()-1;
+    println!("Start: {}", range_two.start());
+    println!("End: {}", range_two.end());
+
+    for value in range_two {
+        println!("the value is {} from range for loop inclusive", array[value]);
+    }
+}
+
+// Function with parameter
+#[test]
+fn test_goodbye() {
+    say_goodbye("Rifky", "John");
+}
+
+fn say_goodbye(first_name: &str, last_name: &str) {
+    println!("Goodbye, {} {}", first_name, last_name);
+}
+
+// Return Value
+/*
+    Saat membuat function, kadang kita ingin mengembalikan hasil eksekusi yang
+    dilakukan di dalam function, atau kita sebut Return value
+    Jika sebuah function ingin mengembalikan value, kita bisa sebutkan ketika ketika
+    deklarasi function menggunakan tanda -> lalu diikuti dengan tipe data kembalian
+    valuenya
+    baris eksekusi terakhir di function akan dianggap sebagai kembalian value-nya
+    Atau jika kita ingin mengembalikan value sebelum baris eksekusi terakhir, kita
+    bisa gunakan kata kunci return, dan diikuti dengan value yang akan dikembalikan
+*/
+fn factorial(n: i32) -> i32 {
+    if n < 1 {
+        return 0;
+    }
+
+    let mut result = 1;
+    for i in 1..=n {
+        result *= i;
+    }
+
+    return result;
+}
+
+#[test]
+fn test_factorial() {
+    let result = factorial(5);
+    println!("the result is {}", result);
 }
