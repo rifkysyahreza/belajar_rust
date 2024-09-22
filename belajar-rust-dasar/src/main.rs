@@ -1,4 +1,4 @@
-use std::array;
+use std::{array, char};
 
 fn main() {
     println!("Hello, world!");
@@ -770,3 +770,4 @@ fn test_factorial() {
     let result = factorial(5);
     println!("the result is {}", result);
 }
+
